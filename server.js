@@ -1,25 +1,24 @@
 const dotenv = require("dotenv").config();
 const express = require("express");
-const mongoose = require("mongoose"); //imported all dependencies
+const mongoose = require("mongoose");
 mongoose.set("strictQuery", false);
 const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const { chats } = require("./data/data");
 
 const userRoutes = require("./Routes/userRoutes");
+const { notFound, errorHandler } = require("./middleware/errorMiddleware");
 
 const app = express();
 
-app.use(express.json());
-// app.use(cookieParser());
+app.use(express.json()); // it is to accept json web token type data
+app.use(cookieParser());
 app.use(express.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(
   cors({
-    origin: [
-      "http://localhost:3000",
-      // "https://chat-app.vercel.app"
-    ],
+    origin: ["http://localhost:3000", "https://chat-app.vercel.app"],
     credentials: true,
   })
 );
@@ -39,7 +38,10 @@ app.get("/", (req, res) => {
 
 app.use("/api/user", userRoutes);
 
-const PORT = process.env.PORT || 5000;
+app.use(notFound);
+app.use(errorHandler);
+
+const PORT = process.env.PORT || 9000;
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {

@@ -1,4 +1,5 @@
-export const mongoose = require("mongoose");
+const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
 
 const userModel = mongoose.Schema(
   {
@@ -8,6 +9,7 @@ const userModel = mongoose.Schema(
     },
     email: {
       type: String,
+      unique: true,
       required: true,
     },
     password: {
@@ -16,7 +18,6 @@ const userModel = mongoose.Schema(
     },
     pic: {
       type: String,
-      required: true,
       default: "https://i.ibb.co/4pDNDk1/avatar.png",
     },
   },
@@ -25,6 +26,21 @@ const userModel = mongoose.Schema(
   }
 );
 
-const User = mongoose.model("User", userSchema);
+userModel.methods.matchPassword = async function (enteredPassword) {
+  return await bcrypt.compare(enteredPassword, this.password);
+};
+
+userModel.pre("save", async function (next) {
+  if (!this.isModified("password")) {
+    return next();
+  }
+
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(this.password, salt);
+  this.password = hashedPassword;
+  next();
+});
+
+const User = mongoose.model("User", userModel);
 
 module.exports = User;

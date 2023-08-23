@@ -1,4 +1,4 @@
-export const mongoose = require("mongoose");
+const mongoose = require("mongoose");
 
 const messageModel = mongoose.SchemaType(
   {
