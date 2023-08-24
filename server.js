@@ -8,6 +8,7 @@ const cors = require("cors");
 const { chats } = require("./data/data");
 
 const userRoutes = require("./Routes/userRoutes");
+const chatRoutes = require("./Routes/chatRoutes");
 const { notFound, errorHandler } = require("./middleware/errorMiddleware");
 
 const app = express();
@@ -37,6 +38,7 @@ app.get("/", (req, res) => {
 // });
 
 app.use("/api/user", userRoutes);
+app.use("/api/chat", chatRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
