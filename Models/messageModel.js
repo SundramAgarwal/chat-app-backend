@@ -1,12 +1,12 @@
 const mongoose = require("mongoose");
 
-const messageModel = mongoose.SchemaType(
+const messageModel = mongoose.Schema(
   {
     sender: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
-    contact: {
+    content: {
       type: String,
       trim: true,
     },
@@ -14,6 +14,12 @@ const messageModel = mongoose.SchemaType(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Chat",
     },
+    readBy: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
   },
   { timestamps: true }
 );
